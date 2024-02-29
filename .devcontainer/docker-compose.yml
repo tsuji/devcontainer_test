@@ -1,0 +1,35 @@
+version: '3'
+services:
+  app:
+    build:
+      context: ../
+      dockerfile: docker/django/Dockerfile
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+      - "8888:8888"
+    entrypoint: /entrypoint.sh
+    volumes:
+      - ..:/yw_back
+    environment:
+      - DATABASE_HOST=db
+      - django-env=local
+
+  db:
+    build: ../docker/psql
+    environment:
+      POSTGRES_PASSWORD: adminadmin
+      POSTGRES_USER: postgres
+      POSTGRES_DB: yw_back_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - yw_back.db.volume:/var/lib/postgresql/data
+
+  redis:
+    image: redis
+      
+volumes:
+  yw_back.db.volume:
+    name: yw_back.db.volume
